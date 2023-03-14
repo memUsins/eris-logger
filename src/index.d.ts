@@ -1,33 +1,14 @@
 import { graylog } from 'graylog2';
 import { Logger } from 'pino';
+import { ILoggerProps, ILoggerConfig } from './types';
 
-export interface ILoggerConfig {
-  terminal?: boolean;
-  file?: { dir: string };
-  graylog?: {
-    hostName: string;
-    servers: [{ host: string; port: number }];
-    addressName: string;
-  };
-  dateformat?: false | Intl.DateTimeFormatOptions;
-}
-
-export interface ILoggerProps {
-  title: string;
-  message: string;
-  params?: any;
-  error?: any;
-  timestamp?: number;
-}
-
-
-export class MyLogger {
+export class ErisLogger {
   public config: ILoggerConfig;
   public graylogInstance: graylog | undefined;
   public pinoInstance: Logger | undefined;
   public defaultParams: {};
-  constructor(config: ILoggerConfig, defaultParams?: {})
-  public setDefaultParams(params: {}): void;
+  constructor(config: ILoggerConfig, defaultParams?: {});
+  public setDefaultParams(params: {}): {};
   public info(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void;
   public alert(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void;
   public debug(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void;

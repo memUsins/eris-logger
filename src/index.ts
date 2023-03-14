@@ -1,50 +1,83 @@
 import { graylog } from 'graylog2';
 // @ts-ignore
 import pino, { Logger } from 'pino';
-import { white, blackBright, yellowBright, red, bgRed } from 'cli-color';
+import { TLogLevel, TColor, ILoggerProps, ILoggerConfig } from './types';
 
-export interface ILoggerConfig {
-  terminal?: boolean;
-  file?: { dir: string };
-  graylog?: {
-    hostName: string;
-    servers: [{ host: string; port: number }];
-    addressName: string;
+const clc = require('cli-color');
+
+export class ErisLogger {
+  public config: ILoggerConfig = {
+    terminal: {
+      use: true,
+      options: {
+        colors: {
+          info: 'greenBright',
+          alert: 'blueBright',
+          debug: 'blackBright',
+          warning: 'yellow',
+          error: 'redBright',
+          critical: 'bgRed',
+        },
+        levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
+      },
+    },
+    file: {
+      use: true,
+      options: {
+        dir: '/logs/log.log',
+        colorize: true,
+        levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
+      },
+    },
+    options: {
+      dateformat: {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+      },
+      levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
+    },
   };
-  dateformat?: false | Intl.DateTimeFormatOptions;
-}
 
-export interface ILoggerProps {
-  title: string;
-  message: string;
-  params?: any;
-  error?: any;
-  timestamp?: number;
-}
-
-export class MyLogger {
-  public config: ILoggerConfig;
   public graylogInstance: graylog | undefined;
   public pinoInstance: Logger | undefined;
   public defaultParams: {};
 
   constructor(config: ILoggerConfig, defaultParams?: {}) {
-    this.config = config;
     this.defaultParams = defaultParams || {};
-    if (config.graylog) this.graylogInstance = new graylog(config.graylog);
-    if (config.file) {
+
+    if (config.options) {
+      config.options.dateformat && this.config.options ? (this.config.options = { dateformat: config.options.dateformat }) : false;
+      config.options.levels && this.config.options ? (this.config.options = { levels: config.options.levels }) : false;
+    }
+
+    if (config.terminal && config.terminal.options) {
+      config.terminal.options.colors && this.config.terminal ? (this.config.terminal.options = { ...{ colors: config.terminal.options.colors } }) : false;
+      config.terminal.options.levels && this.config.terminal ? (this.config.terminal.options = { ...{ levels: config.terminal.options.levels } }) : false;
+    }
+
+    if (config.graylog && config.graylog.use && config.graylog.options) {
+      this.config.graylog = config.graylog;
+      this.graylogInstance = new graylog(config.graylog.options);
+    }
+
+    if (config.file && config.file.use && config.file.options) {
       const pinoConfig = {
         transport: {
           target: 'pino-pretty',
           options: {
-            colorize: false,
-            destination: config.file.dir,
+            colorize: config.file.options.colorize === undefined ? this.config.file?.options?.colorize : config.file.options.colorize,
+            destination: config.file.options.dir,
             translateTime: true,
             messageFormat: true,
           },
         },
       };
 
+      this.config.file = config.file;
       this.pinoInstance = pino(pinoConfig);
     }
   }
@@ -52,72 +85,130 @@ export class MyLogger {
   private formatDate(timestamp?: number): string {
     const date = new Date(timestamp || new Date().getTime());
 
-    return date.toLocaleDateString(
-      'ru-RU',
-      this.config.dateformat || {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-      }
-    );
+    if (this.config.options && typeof this.config.options.dateformat !== 'boolean') {
+      return date.toLocaleDateString('ru-RU', this.config.options.dateformat);
+    } else return date.getTime().toString();
   }
 
   private formatString({ title, message, params, error, timestamp }: ILoggerProps): string {
-    const header = `[TIME   ]: ${this.formatDate(timestamp)}`;
-    const bodyTitle = `[TITLE  ]: ${title}`;
+    const header = `[TIME]: ${this.formatDate(timestamp)}`;
+    const bodyTitle = `[TITLE]: ${title}`;
     const bodyMessage = `[MESSAGE]: ${message}`;
-    const bodyParams = `[PARAMS ]: ${JSON.stringify(params || null)}`;
-    const bodyError = `[ERROR  ]: ${error || null}`;
+    const bodyParams = `[PARAMS]: ${JSON.stringify(params || null)}`;
+    const bodyError = `[ERROR]: ${error || null}`;
 
     return ['', header, bodyTitle, bodyMessage, bodyParams, bodyError].join('\n');
   }
 
   public setDefaultParams(params: {}) {
-    this.defaultParams = params;
+    return (this.defaultParams = Object.assign(this.defaultParams, params));
   }
 
-  public info({ title, message, params, timestamp }: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void {
-    params = { ...this.defaultParams, ...params };
+  private isTerminalLogger(logLevel: TLogLevel, callback: (color: TColor) => void) {
+    if (this.config.terminal && this.config.terminal.use && this.config.terminal?.options?.levels?.indexOf(logLevel) !== -1) {
+      let color: TColor = 'white';
 
-    if (this.pinoInstance) this.pinoInstance.info({ title, message, params, timestamp });
-    if (this.graylogInstance) this.graylogInstance.info({ title, message, params, timestamp });
-    if (this.config.terminal) console.info(white(this.formatString({ title, message, params, timestamp })));
+      if (this.config.terminal.options.colors && this.config.terminal.options.colors[logLevel]) {
+        color = this.config.terminal.options.colors[logLevel] || 'white';
+      }
+
+      callback(color);
+    }
   }
 
-  public alert({ title, message, params, timestamp }: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void {
-    params = { ...this.defaultParams, ...params };
-
-    if (this.pinoInstance) this.pinoInstance.info({ title, message, params, timestamp });
-    if (this.graylogInstance) this.graylogInstance.alert({ title, message, params, timestamp });
-    if (this.config.terminal) console.log(white(this.formatString({ title, message, params, timestamp })));
+  private isFileLogger(logLevel: TLogLevel, callback: () => void) {
+    if (this.config.file && this.config.file.use && this.pinoInstance && this.config.file?.options?.levels?.indexOf(logLevel) !== -1) return callback();
   }
 
-  public debug({ title, message, params, timestamp }: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void {
-    params = { ...this.defaultParams, ...params };
-
-    if (this.pinoInstance) this.pinoInstance.debug({ title, message, params, timestamp });
-    if (this.graylogInstance) this.graylogInstance.debug({ title, message, params, timestamp });
-    if (this.config.terminal) console.debug(blackBright(this.formatString({ title, message, params, timestamp })));
+  private isGraylogLogger(logLevel: TLogLevel, callback: () => void) {
+    if (this.config.graylog && this.config.graylog.use && this.graylogInstance && this.config.graylog?.options?.levels?.indexOf(logLevel) !== -1)
+      return callback();
   }
 
-  public warning({ title, message, error, timestamp }: Pick<ILoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void {
-    if (this.pinoInstance) this.pinoInstance.warn({ title, message, error, timestamp });
-    if (this.graylogInstance) this.graylogInstance.warning({ title, message, error, timestamp });
-    if (this.config.terminal) console.warn(yellowBright(this.formatString({ title, message, error, timestamp })));
+  public info(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void {
+    const logLevel: TLogLevel = 'info';
+
+    if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
+
+    props.params = this.setDefaultParams(props.params);
+
+    this.isTerminalLogger(logLevel, (color) => console.info(clc[color](this.formatString(props))));
+    this.isFileLogger(logLevel, () => this.pinoInstance?.info(props));
+    this.isGraylogLogger(logLevel, () => this.graylogInstance?.info(props));
   }
 
-  public error({ title, message, error, timestamp }: Pick<ILoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void {
-    if (this.pinoInstance) this.pinoInstance.error({ title, message, error, timestamp });
-    if (this.graylogInstance) this.graylogInstance.error({ title, message, error, timestamp });
-    if (this.config.terminal) console.error(red(this.formatString({ title, message, error, timestamp })));
+  public alert(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void {
+    const logLevel: TLogLevel = 'alert';
+
+    if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
+
+    props.params = this.setDefaultParams(props.params);
+
+    this.isTerminalLogger(logLevel, (color) => console.log(clc[color](this.formatString(props))));
+    this.isFileLogger(logLevel, () => this.pinoInstance?.info(props));
+    this.isGraylogLogger(logLevel, () => this.graylogInstance?.alert(props));
   }
 
-  public critical({ title, message, error, timestamp }: Pick<ILoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void {
-    if (this.pinoInstance) this.pinoInstance.fatal({ title, message, error, timestamp });
-    if (this.graylogInstance) this.graylogInstance.critical({ title, message, error, timestamp });
-    if (this.config.terminal) console.error(bgRed(this.formatString({ title, message, error, timestamp })));
+  public debug(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void {
+    const logLevel: TLogLevel = 'debug';
+
+    if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
+
+    props.params = this.setDefaultParams(props.params);
+
+    this.isTerminalLogger(logLevel, (color) => console.debug(clc[color](this.formatString(props))));
+    this.isFileLogger(logLevel, () => this.pinoInstance?.debug(props));
+    this.isGraylogLogger(logLevel, () => this.graylogInstance?.debug(props));
+  }
+
+  public warning(props: Pick<ILoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void {
+    const logLevel: TLogLevel = 'warning';
+
+    if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
+
+    this.isTerminalLogger(logLevel, (color) => console.warn(clc[color](this.formatString(props))));
+    this.isFileLogger(logLevel, () => this.pinoInstance?.warn(props));
+    this.isGraylogLogger(logLevel, () => this.graylogInstance?.warning(props));
+  }
+
+  public error(props: Pick<ILoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void {
+    const logLevel: TLogLevel = 'error';
+
+    if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
+
+    this.isTerminalLogger(logLevel, (color) => console.error(clc[color](this.formatString(props))));
+    this.isFileLogger(logLevel, () => this.pinoInstance?.error(props));
+    this.isGraylogLogger(logLevel, () => this.graylogInstance?.error(props));
+  }
+
+  public critical(props: Pick<ILoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void {
+    const logLevel: TLogLevel = 'critical';
+
+    if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
+
+    this.isTerminalLogger(logLevel, (color) => console.error(clc[color](this.formatString(props))));
+    this.isFileLogger(logLevel, () => this.pinoInstance?.fatal(props));
+    this.isGraylogLogger(logLevel, () => this.graylogInstance?.critical(props));
   }
 }
+
+const erisLoggerConfig: ILoggerConfig = {
+  terminal: {
+    use: true,
+    options: {},
+  },
+  options: {},
+};
+
+const logger = new ErisLogger(erisLoggerConfig);
+
+const logMessage = { title: 'INFO', message: 'info string', params: { foo: 'bar' } };
+const logErrorMessage = { title: 'ERROR', message: 'error string', error: new Error('Some error') };
+
+logger.info(logMessage);
+logger.setDefaultParams({ second: 'param' });
+logger.alert(logMessage);
+logger.debug(logMessage);
+logger.warning(logErrorMessage);
+logger.error(logErrorMessage);
+logger.critical(logErrorMessage);

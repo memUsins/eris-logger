@@ -2,6 +2,12 @@
 
 * [About](#about-package)
 * [Installation](#installation)
+* [Example](#example)
+* - [General concepts](#general-concepts)
+* - [Terminal](#terminal)
+* - [File](#file)
+* - [Graylog](#graylog)
+* - [Methods](#methods)
 
 ## About package
 

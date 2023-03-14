@@ -1,6 +1,6 @@
 {
   "name": "eris-logger",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Logger",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -35,5 +35,13 @@
     "graylog2": "^0.2.1",
     "pino": "^8.11.0",
     "pino-pretty": "^9.4.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/memUsins/eris-logger.git"
+  },
+  "bugs": {
+    "url": "https://github.com/memUsins/eris-logger/issues"
+  },
+  "homepage": "https://github.com/memUsins/eris-logger#readme"
 }

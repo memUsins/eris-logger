@@ -1,6 +1,6 @@
 {
   "name": "eris-logger",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "Logger",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -42,10 +42,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/memUsins/eris-logger.git"
+    "url": "git+https://github.com/eris-apple/eris-logger.git"
   },
   "bugs": {
-    "url": "https://github.com/memUsins/eris-logger/issues"
+    "url": "https://github.com/eris-apple/eris-logger/issues"
   },
-  "homepage": "https://github.com/memUsins/eris-logger#readme"
+  "homepage": "https://github.com/eris-apple/eris-logger#readme"
 }

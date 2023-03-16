@@ -191,24 +191,3 @@ export class ErisLogger {
     this.isGraylogLogger(logLevel, () => this.graylogInstance?.critical(props));
   }
 }
-
-const erisLoggerConfig: ILoggerConfig = {
-  terminal: {
-    use: true,
-    options: {},
-  },
-  options: {},
-};
-
-const logger = new ErisLogger(erisLoggerConfig);
-
-const logMessage = { title: 'INFO', message: 'info string', params: { foo: 'bar' } };
-const logErrorMessage = { title: 'ERROR', message: 'error string', error: new Error('Some error') };
-
-logger.info(logMessage);
-logger.setDefaultParams({ second: 'param' });
-logger.alert(logMessage);
-logger.debug(logMessage);
-logger.warning(logErrorMessage);
-logger.error(logErrorMessage);
-logger.critical(logErrorMessage);

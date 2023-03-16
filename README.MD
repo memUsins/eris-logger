@@ -6,14 +6,12 @@
 * - [General concepts](#general-concepts)
 * - [Terminal](#terminal)
 * - [File](#file)
-* - [Graylog](#graylog)
 * - [Methods](#methods)
 
 ## About package
 
 ErisLogger is a logging tool that makes life easier. 
-It has under the hood a [pino](https://www.npmjs.com/package/pino) package for writing logs to a file,
-a [graylog2](https://www.npmjs.com/package/graylog2) package for writing logs to the service of the same name,
+It has under the hood a [pino](https://www.npmjs.com/package/pino) package for writing logs to a file 
 as well as tools for console logging.
 
 ##  Installation
@@ -31,7 +29,6 @@ The logger also includes the following settings:
 
 - Terminal Settings
 - File settings
-- Graylog setting
 - Date format
 - Logging level
 
@@ -39,7 +36,6 @@ The logger also includes the following settings:
 const logger = new ErisLogger({
   terminal: { ... },
   file: { ... },
-  graylog: { ... },
   options: {},
 });
 ```
@@ -62,12 +58,6 @@ const logger = new ErisLogger({
     use: true,
     options: {
       levels: ['warning', 'error', 'critical']
-    } 
-  },
-  graylog: {
-    use: true,
-    options: {
-      levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical']
     } 
   },
   options: {},
@@ -148,36 +138,6 @@ const fileConfig = {
 
 
 const logger = new ErisLogger({ file: fileConfig, options: {} });
-```
-
-### Graylog
-
-To begin with, let's create an instance of the ErisLogger class,
-after which we indicate that we need to output logs in the file.
-
-```js
-const logger = new ErisLogger({ graylog: { use: true, options: {} }, options: {} });
-```
-
-An example of the settings looks like this:
-
-```js
-const graylogConfig = {
-  use: true,
-  options: {
-    servers: [
-      { host: '127.0.0.1', port: 12201 },
-      { host: '127.0.0.2', port: 12201 }
-    ],
-    hostname: 'server.name',
-    facility: 'Node.js',
-    bufferSize: 1350,
-    levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
-  },
-};
-
-
-const logger = new ErisLogger({ file: graylogConfig, options: {} });
 ```
 
 ### Methods

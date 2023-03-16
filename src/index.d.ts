@@ -1,10 +1,8 @@
-import { graylog } from 'graylog2';
 import { Logger } from 'pino';
 import { ILoggerProps, ILoggerConfig } from './types';
 
 export class ErisLogger {
   public config: ILoggerConfig;
-  public graylogInstance: graylog | undefined;
   public pinoInstance: Logger | undefined;
   public defaultParams: {};
   constructor(config: ILoggerConfig, defaultParams?: {});

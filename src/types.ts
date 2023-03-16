@@ -49,17 +49,6 @@ export interface IFileLoggerConfig {
   };
 }
 
-export interface IGraylogLoggerConfig {
-  use: boolean;
-  options: {
-    servers: [{ host: string; port: number }];
-    hostname: string;
-    facility: string;
-    bufferSize: number;
-    levels?: TLogLevel[];
-  };
-}
-
 export interface IGlobalLoggerConfig {
   dateformat?: false | Intl.DateTimeFormatOptions;
   levels?: TLogLevel[];
@@ -68,7 +57,6 @@ export interface IGlobalLoggerConfig {
 export interface ILoggerConfig {
   terminal?: ITerminalLoggerConfig;
   file?: IFileLoggerConfig;
-  graylog?: IGraylogLoggerConfig;
   options?: IGlobalLoggerConfig;
 }
 

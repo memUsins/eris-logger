@@ -1,6 +1,6 @@
 {
   "name": "eris-logger",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Logger",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -32,7 +32,6 @@
   "dependencies": {
     "@types/pino": "^7.0.5",
     "cli-color": "^2.0.3",
-    "graylog2": "^0.2.1",
     "pino": "^8.11.0",
     "pino-pretty": "^9.4.0"
   },

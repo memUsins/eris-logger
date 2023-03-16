@@ -1,9 +1,7 @@
-import { graylog } from 'graylog2';
 import { Logger } from 'pino';
 import { ILoggerProps, ILoggerConfig } from './types';
 export declare class ErisLogger {
     config: ILoggerConfig;
-    graylogInstance: graylog | undefined;
     pinoInstance: Logger | undefined;
     defaultParams: {};
     constructor(config: ILoggerConfig, defaultParams?: {});
@@ -12,7 +10,6 @@ export declare class ErisLogger {
     setDefaultParams(params: {}): {};
     private isTerminalLogger;
     private isFileLogger;
-    private isGraylogLogger;
     info(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void;
     alert(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void;
     debug(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void;

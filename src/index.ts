@@ -42,7 +42,6 @@ export class ErisLogger {
     },
   };
 
-  public graylogInstance: graylog | undefined;
   public pinoInstance: Logger | undefined;
   public defaultParams: {};
 
@@ -57,11 +56,6 @@ export class ErisLogger {
     if (config.terminal && config.terminal.options) {
       config.terminal.options.colors && this.config.terminal ? (this.config.terminal.options = { ...{ colors: config.terminal.options.colors } }) : false;
       config.terminal.options.levels && this.config.terminal ? (this.config.terminal.options = { ...{ levels: config.terminal.options.levels } }) : false;
-    }
-
-    if (config.graylog && config.graylog.use && config.graylog.options) {
-      this.config.graylog = config.graylog;
-      this.graylogInstance = new graylog(config.graylog.options);
     }
 
     if (config.file && config.file.use && config.file.options) {
@@ -120,11 +114,6 @@ export class ErisLogger {
     if (this.config.file && this.config.file.use && this.pinoInstance && this.config.file?.options?.levels?.indexOf(logLevel) !== -1) return callback();
   }
 
-  private isGraylogLogger(logLevel: TLogLevel, callback: () => void) {
-    if (this.config.graylog && this.config.graylog.use && this.graylogInstance && this.config.graylog?.options?.levels?.indexOf(logLevel) !== -1)
-      return callback();
-  }
-
   public info(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void {
     const logLevel: TLogLevel = 'info';
 
@@ -134,7 +123,6 @@ export class ErisLogger {
 
     this.isTerminalLogger(logLevel, (color) => console.info(clc[color](this.formatString(props))));
     this.isFileLogger(logLevel, () => this.pinoInstance?.info(props));
-    this.isGraylogLogger(logLevel, () => this.graylogInstance?.info(props));
   }
 
   public alert(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void {
@@ -146,7 +134,6 @@ export class ErisLogger {
 
     this.isTerminalLogger(logLevel, (color) => console.log(clc[color](this.formatString(props))));
     this.isFileLogger(logLevel, () => this.pinoInstance?.info(props));
-    this.isGraylogLogger(logLevel, () => this.graylogInstance?.alert(props));
   }
 
   public debug(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void {
@@ -158,7 +145,6 @@ export class ErisLogger {
 
     this.isTerminalLogger(logLevel, (color) => console.debug(clc[color](this.formatString(props))));
     this.isFileLogger(logLevel, () => this.pinoInstance?.debug(props));
-    this.isGraylogLogger(logLevel, () => this.graylogInstance?.debug(props));
   }
 
   public warning(props: Pick<ILoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void {
@@ -168,7 +154,6 @@ export class ErisLogger {
 
     this.isTerminalLogger(logLevel, (color) => console.warn(clc[color](this.formatString(props))));
     this.isFileLogger(logLevel, () => this.pinoInstance?.warn(props));
-    this.isGraylogLogger(logLevel, () => this.graylogInstance?.warning(props));
   }
 
   public error(props: Pick<ILoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void {
@@ -178,7 +163,6 @@ export class ErisLogger {
 
     this.isTerminalLogger(logLevel, (color) => console.error(clc[color](this.formatString(props))));
     this.isFileLogger(logLevel, () => this.pinoInstance?.error(props));
-    this.isGraylogLogger(logLevel, () => this.graylogInstance?.error(props));
   }
 
   public critical(props: Pick<ILoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void {
@@ -188,6 +172,5 @@ export class ErisLogger {
 
     this.isTerminalLogger(logLevel, (color) => console.error(clc[color](this.formatString(props))));
     this.isFileLogger(logLevel, () => this.pinoInstance?.fatal(props));
-    this.isGraylogLogger(logLevel, () => this.graylogInstance?.critical(props));
   }
 }

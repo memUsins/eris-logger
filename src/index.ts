@@ -1,5 +1,3 @@
-import { graylog } from 'graylog2';
-// @ts-ignore
 import pino, { Logger } from 'pino';
 import { TLogLevel, TColor, ILoggerProps, ILoggerConfig } from './types';
 

@@ -1,7 +1,6 @@
 import pino, { Logger } from 'pino';
 import { TLogLevel, TColor, ILoggerProps, ILoggerConfig } from './types';
-
-const clc = require('cli-color');
+const clc = require('chalk');
 
 export class ErisLogger {
   public config: ILoggerConfig = {
@@ -51,7 +50,7 @@ export class ErisLogger {
       config.options.levels && this.config.options ? (this.config.options = { levels: config.options.levels }) : false;
     }
 
-    if (config.terminal && config.terminal.options) {
+    if (config.terminal && config.terminal.use && config.terminal.options) {
       config.terminal.options.colors && this.config.terminal ? (this.config.terminal.options = { ...{ colors: config.terminal.options.colors } }) : false;
       config.terminal.options.levels && this.config.terminal ? (this.config.terminal.options = { ...{ levels: config.terminal.options.levels } }) : false;
     }
@@ -72,6 +71,10 @@ export class ErisLogger {
       this.config.file = config.file;
       this.pinoInstance = pino(pinoConfig);
     }
+  }
+
+  public getFileLoggerInstance(): Logger | undefined {
+    return this.pinoInstance ? this.pinoInstance : undefined;
   }
 
   private formatDate(timestamp?: number): string {

@@ -6,6 +6,7 @@ export class ErisLogger {
   public pinoInstance: Logger | undefined;
   public defaultParams: {};
   constructor(config: ILoggerConfig, defaultParams?: {});
+  public getFileLoggerInstance(): Logger | undefined;
   public setDefaultParams(params: {}): {};
   public info(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void;
   public alert(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void;

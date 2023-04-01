@@ -74,7 +74,7 @@ export interface ILoggerConfig {
 export interface ILoggerProps {
   title: string;
   message: string;
-  params?: any;
-  error?: any;
+  params?: object;
+  error?: object;
   timestamp?: number;
 }

@@ -5,6 +5,7 @@ export declare class ErisLogger {
     pinoInstance: Logger | undefined;
     defaultParams: {};
     constructor(config: ILoggerConfig, defaultParams?: {});
+    getFileLoggerInstance(): Logger | undefined;
     private formatDate;
     private formatString;
     setDefaultParams(params: {}): {};

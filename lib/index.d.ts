@@ -1,14 +1,13 @@
 import { Logger } from 'pino';
-import { ILoggerProps, ILoggerConfig } from './types';
+import { ILoggerProps, ILoggerConfig, TDefaultObject } from './types';
 export declare class ErisLogger {
     config: ILoggerConfig;
     pinoInstance: Logger | undefined;
-    defaultParams: {};
-    constructor(config: ILoggerConfig, defaultParams?: {});
-    getFileLoggerInstance(): Logger | undefined;
+    defaultParams: TDefaultObject;
+    constructor(config: ILoggerConfig, defaultParams?: TDefaultObject);
     private formatDate;
     private formatString;
-    setDefaultParams(params: {}): {};
+    setDefaultParams(params: TDefaultObject): TDefaultObject;
     private isTerminalLogger;
     private isFileLogger;
     info(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void;

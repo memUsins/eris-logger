@@ -25,6 +25,8 @@ export type TColor = TTerminalColors | TTerminalBrightColors | TTerminalBgColors
 
 export type TLogLevel = 'info' | 'alert' | 'debug' | 'warning' | 'error' | 'critical';
 
+export type TDefaultObject = {};
+
 export interface ITerminalLoggerConfig {
   use: boolean;
   options: {
@@ -63,7 +65,7 @@ export interface ILoggerConfig {
 export interface ILoggerProps {
   title: string;
   message: string;
-  params?: any;
-  error?: any;
+  params?: TDefaultObject;
+  error?: TDefaultObject;
   timestamp?: number;
 }

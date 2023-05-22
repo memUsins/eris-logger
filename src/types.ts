@@ -29,26 +29,22 @@ export type TDefaultObject = {};
 
 export interface ITerminalLoggerConfig {
   use: boolean;
-  options: {
-    colors?: {
-      info?: TColor;
-      alert?: TColor;
-      debug?: TColor;
-      warning?: TColor;
-      error?: TColor;
-      critical?: TColor;
-    };
-    levels?: TLogLevel[];
+  colors?: {
+    info?: TColor;
+    alert?: TColor;
+    debug?: TColor;
+    warning?: TColor;
+    error?: TColor;
+    critical?: TColor;
   };
+  levels?: TLogLevel[];
 }
 
 export interface IFileLoggerConfig {
   use: boolean;
-  options: {
-    dir: string;
-    colorize?: boolean;
-    levels?: TLogLevel[];
-  };
+  dir: string;
+  colorize?: boolean;
+  levels?: TLogLevel[];
 }
 
 export interface IGlobalLoggerConfig {
@@ -63,7 +59,7 @@ export interface ILoggerConfig {
 }
 
 export interface ILoggerProps {
-  title: string;
+  title?: string;
   message: string;
   params?: TDefaultObject;
   error?: TDefaultObject;

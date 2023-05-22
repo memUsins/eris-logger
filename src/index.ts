@@ -7,25 +7,21 @@ export class ErisLogger {
   public config: ILoggerConfig = {
     terminal: {
       use: true,
-      options: {
-        colors: {
-          info: 'greenBright',
-          alert: 'blueBright',
-          debug: 'blackBright',
-          warning: 'yellow',
-          error: 'redBright',
-          critical: 'bgRed',
-        },
-        levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
+      colors: {
+        info: 'greenBright',
+        alert: 'blueBright',
+        debug: 'blackBright',
+        warning: 'yellow',
+        error: 'redBright',
+        critical: 'bgRed',
       },
+      levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
     },
     file: {
       use: true,
-      options: {
-        dir: '/logs/log.log',
-        colorize: true,
-        levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
-      },
+      dir: '/logs/log.log',
+      colorize: true,
+      levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
     },
     options: {
       dateformat: {
@@ -51,18 +47,18 @@ export class ErisLogger {
       config.options.levels && this.config.options ? (this.config.options = { levels: config.options.levels }) : false;
     }
 
-    if (config.terminal && config.terminal.use && config.terminal.options) {
-      config.terminal.options.colors && this.config.terminal ? (this.config.terminal.options = { ...{ colors: config.terminal.options.colors } }) : false;
-      config.terminal.options.levels && this.config.terminal ? (this.config.terminal.options = { ...{ levels: config.terminal.options.levels } }) : false;
+    if (config.terminal && config.terminal.use) {
+      config.terminal.colors && this.config.terminal ? (this.config.terminal = { ...this.config.terminal, colors: config.terminal.colors }) : false;
+      config.terminal.levels && this.config.terminal ? (this.config.terminal = { ...this.config.terminal, levels: config.terminal.levels }) : false;
     }
 
-    if (config.file && config.file.use && config.file.options) {
+    if (config.file && config.file.use) {
       const pinoConfig = {
         transport: {
           target: 'pino-pretty',
           options: {
-            colorize: config.file.options.colorize === undefined ? this.config.file?.options?.colorize : config.file.options.colorize,
-            destination: config.file.options.dir,
+            colorize: config.file.colorize === undefined ? this.config.file?.colorize : config.file.colorize,
+            destination: config.file.dir,
             translateTime: true,
             messageFormat: true,
           },
@@ -89,7 +85,7 @@ export class ErisLogger {
     const bodyParams = `[PARAMS]: ${JSON.stringify(params || null)}`;
     const bodyError = `[ERROR]: ${JSON.stringify(error) || null}`;
 
-    return ['', header, bodyTitle, bodyMessage, bodyParams, bodyError].join('\n');
+    return [' ', header, title ? bodyTitle : '', bodyMessage, bodyParams, bodyError].filter((item) => !!item).join('\n');
   }
 
   public setDefaultParams(params: TDefaultObject) {
@@ -97,11 +93,11 @@ export class ErisLogger {
   }
 
   private isTerminalLogger(logLevel: TLogLevel, callback: (color: TColor) => void) {
-    if (this.config.terminal && this.config.terminal.use && this.config.terminal?.options?.levels?.indexOf(logLevel) !== -1) {
+    if (this.config.terminal && this.config.terminal.use && this.config.terminal?.levels?.indexOf(logLevel) !== -1) {
       let color: TColor = 'white';
 
-      if (this.config.terminal.options.colors && this.config.terminal.options.colors[logLevel]) {
-        color = this.config.terminal.options.colors[logLevel] || 'white';
+      if (this.config.terminal.colors && this.config.terminal.colors[logLevel]) {
+        color = this.config.terminal.colors[logLevel] || 'white';
       }
 
       callback(color);
@@ -109,7 +105,7 @@ export class ErisLogger {
   }
 
   private isFileLogger(logLevel: TLogLevel, callback: () => void) {
-    if (this.config.file && this.config.file.use && this.pinoInstance && this.config.file?.options?.levels?.indexOf(logLevel) !== -1) return callback();
+    if (this.config.file && this.config.file.use && this.pinoInstance && this.config.file?.levels?.indexOf(logLevel) !== -1) return callback();
   }
 
   public info(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void {

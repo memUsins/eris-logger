@@ -50,17 +50,12 @@ How it looks like:
 const logger = new ErisLogger({
   terminal: {
     use: true,
-    options: {
-      levels: ['info', 'debug']
-    }
+    levels: ['info', 'debug']
   },
   file: {
     use: true,
-    options: {
-      levels: ['warning', 'error', 'critical']
-    } 
+    levels: ['warning', 'error', 'critical']
   },
-  options: {},
 });
 ```
 
@@ -80,7 +75,7 @@ To begin with, let's create an instance of the ErisLogger class,
 after which we indicate that we need to output logs in the terminal.
 
 ```js
-const logger = new ErisLogger({ terminal: { use: true, options: {} }, options: {} });
+const logger = new ErisLogger({ terminal: { use: true } });
 ```
 
 This is how the default settings look like:
@@ -88,21 +83,19 @@ This is how the default settings look like:
 ```js
 const terminalConfig = {
   use: true,
-  options: {
-    colors: {
-      info: 'greenBright',
-      alert: 'blueBright',
-      debug: 'blackBright',
-      warning: 'yellow',
-      error: 'redBright',
-      critical: 'bgRed',
-    },
-    levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
+  colors: {
+    info: 'greenBright',
+    alert: 'blueBright',
+    debug: 'blackBright',
+    warning: 'yellow',
+    error: 'redBright',
+    critical: 'bgRed',
   },
+  levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
 };
 
 
-const logger = new ErisLogger({ terminal: terminalConfig, options: {} });
+const logger = new ErisLogger({ terminal: terminalConfig });
 ```
 
 List of all available colors:
@@ -121,7 +114,7 @@ To begin with, let's create an instance of the ErisLogger class,
 after which we indicate that we need to output logs in the file.
 
 ```js
-const logger = new ErisLogger({ file: { use: true, options: {} }, options: {} });
+const logger = new ErisLogger({ file: { use: true } });
 ```
 
 This is how the default settings look like:
@@ -129,15 +122,13 @@ This is how the default settings look like:
 ```js
 const fileConfig = {
   use: true,
-  options: {
-    dir: '/logs/log.log',
-    colorize: true,
-    levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
-  },
+  dir: '/logs/log.log',
+  colorize: true,
+  levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
 };
 
 
-const logger = new ErisLogger({ file: fileConfig, options: {} });
+const logger = new ErisLogger({ file: fileConfig });
 ```
 
 ### Methods

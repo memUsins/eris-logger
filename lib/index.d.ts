@@ -13,7 +13,7 @@ export declare class ErisLogger {
     info(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void;
     alert(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void;
     debug(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void;
-    warning(props: Pick<ILoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void;
-    error(props: Pick<ILoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void;
-    critical(props: Pick<ILoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void;
+    warning(props: ILoggerProps): void;
+    error(props: ILoggerProps): void;
+    critical(props: ILoggerProps): void;
 }

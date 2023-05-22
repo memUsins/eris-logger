@@ -141,30 +141,34 @@ export class ErisLogger {
     this.isFileLogger(logLevel, () => this.pinoInstance?.debug(props));
   }
 
-  public warning(props: Pick<ILoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void {
+  public warning(props: ILoggerProps): void {
     const logLevel: TLogLevel = 'warning';
 
     if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
 
-    this.isTerminalLogger(logLevel, (color) => console.warn(clc[color](this.formatString({ ...props, params: this.defaultParams }))));
+    props.params = props.params ? this.setDefaultParams(props.params) : this.defaultParams;
+
+    this.isTerminalLogger(logLevel, (color) => console.warn(clc[color](this.formatString({ ...props }))));
     this.isFileLogger(logLevel, () => this.pinoInstance?.warn({ ...props, params: this.defaultParams }));
   }
 
-  public error(props: Pick<ILoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void {
+  public error(props: ILoggerProps): void {
     const logLevel: TLogLevel = 'error';
 
     if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
 
-    this.isTerminalLogger(logLevel, (color) => console.error(clc[color](this.formatString({ ...props, params: this.defaultParams }))));
+    props.params = props.params ? this.setDefaultParams(props.params) : this.defaultParams;
+
+    this.isTerminalLogger(logLevel, (color) => console.error(clc[color](this.formatString({ ...props }))));
     this.isFileLogger(logLevel, () => this.pinoInstance?.error({ ...props, params: this.defaultParams }));
   }
 
-  public critical(props: Pick<ILoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void {
+  public critical(props: ILoggerProps): void {
     const logLevel: TLogLevel = 'critical';
 
     if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
 
-    this.isTerminalLogger(logLevel, (color) => console.error(clc[color](this.formatString({ ...props, params: this.defaultParams }))));
+    this.isTerminalLogger(logLevel, (color) => console.error(clc[color](this.formatString({ ...props }))));
     this.isFileLogger(logLevel, () => this.pinoInstance?.fatal({ ...props, params: this.defaultParams }));
   }
 }

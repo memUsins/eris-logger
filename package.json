@@ -21,10 +21,10 @@
   "license": "ISC",
   "devDependencies": {
     "@types/chalk": "^2.2.0",
-    "@types/pino": "^7.0.5",
     "@types/cli-color": "^2.0.2",
     "@types/graylog2": "^0.2.2",
     "@types/node": "^18.15.0",
+    "@types/pino": "^7.0.5",
     "@typescript-eslint/eslint-plugin": "^5.54.1",
     "@typescript-eslint/parser": "^5.54.1",
     "dotenv": "^16.0.3",
@@ -40,7 +40,8 @@
     "build": "^0.1.4",
     "chalk": "^4.1.2",
     "pino": "^8.11.0",
-    "pino-pretty": "^9.4.0"
+    "pino-pretty": "^9.4.0",
+    "tsc-alias": "^1.8.7"
   },
   "repository": {
     "type": "git",

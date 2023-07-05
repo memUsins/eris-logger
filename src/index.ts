@@ -48,8 +48,18 @@ export class ErisLogger {
     }
 
     if (config.terminal && config.terminal.use) {
-      config.terminal.colors && this.config.terminal ? (this.config.terminal = { ...this.config.terminal, colors: config.terminal.colors }) : false;
-      config.terminal.levels && this.config.terminal ? (this.config.terminal = { ...this.config.terminal, levels: config.terminal.levels }) : false;
+      config.terminal.colors && this.config.terminal
+        ? (this.config.terminal = {
+            ...this.config.terminal,
+            colors: config.terminal.colors,
+          })
+        : false;
+      config.terminal.levels && this.config.terminal
+        ? (this.config.terminal = {
+            ...this.config.terminal,
+            levels: config.terminal.levels,
+          })
+        : false;
     }
 
     if (config.file && config.file.use) {
@@ -113,7 +123,7 @@ export class ErisLogger {
 
     if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
 
-    props.params = props.params ? this.setDefaultParams(props.params) : this.defaultParams;
+    props.params = props.params ? props.params : this.defaultParams;
 
     this.isTerminalLogger(logLevel, (color) => console.info(clc[color](this.formatString(props))));
     this.isFileLogger(logLevel, () => this.pinoInstance?.info(props));
@@ -124,7 +134,7 @@ export class ErisLogger {
 
     if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
 
-    props.params = props.params ? this.setDefaultParams(props.params) : this.defaultParams;
+    props.params = props.params ? props.params : this.defaultParams;
 
     this.isTerminalLogger(logLevel, (color) => console.log(clc[color](this.formatString(props))));
     this.isFileLogger(logLevel, () => this.pinoInstance?.info(props));
@@ -135,7 +145,7 @@ export class ErisLogger {
 
     if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
 
-    props.params = props.params ? this.setDefaultParams(props.params) : this.defaultParams;
+    props.params = props.params ? props.params : this.defaultParams;
 
     this.isTerminalLogger(logLevel, (color) => console.debug(clc[color](this.formatString(props))));
     this.isFileLogger(logLevel, () => this.pinoInstance?.debug(props));
@@ -146,7 +156,7 @@ export class ErisLogger {
 
     if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
 
-    props.params = props.params ? this.setDefaultParams(props.params) : this.defaultParams;
+    props.params = props.params ? props.params : this.defaultParams;
 
     this.isTerminalLogger(logLevel, (color) => console.warn(clc[color](this.formatString({ ...props }))));
     this.isFileLogger(logLevel, () => this.pinoInstance?.warn({ ...props, params: this.defaultParams }));
@@ -157,7 +167,7 @@ export class ErisLogger {
 
     if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
 
-    props.params = props.params ? this.setDefaultParams(props.params) : this.defaultParams;
+    props.params = props.params ? props.params : this.defaultParams;
 
     this.isTerminalLogger(logLevel, (color) => console.error(clc[color](this.formatString({ ...props }))));
     this.isFileLogger(logLevel, () => this.pinoInstance?.error({ ...props, params: this.defaultParams }));

@@ -118,67 +118,69 @@ export class ErisLogger {
     if (this.config.file && this.config.file.use && this.pinoInstance && this.config.file?.levels?.indexOf(logLevel) !== -1) return callback();
   }
 
-  public info(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void {
+  public info(message: string, params?: object, timestamp?: number): void {
     const logLevel: TLogLevel = 'info';
 
     if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
 
-    props.params = props.params ? props.params : this.defaultParams;
+    params = params ? { ...params, ...this.defaultParams } : this.defaultParams;
 
-    this.isTerminalLogger(logLevel, (color) => console.info(clc[color](this.formatString(props))));
-    this.isFileLogger(logLevel, () => this.pinoInstance?.info(props));
+    this.isTerminalLogger(logLevel, (color) => console.info(clc[color](this.formatString({ message, params, timestamp }))));
+    this.isFileLogger(logLevel, () => this.pinoInstance?.info({ message, params, timestamp }));
   }
 
-  public alert(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void {
+  public alert(message: string, params?: object, timestamp?: number): void {
     const logLevel: TLogLevel = 'alert';
 
     if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
 
-    props.params = props.params ? props.params : this.defaultParams;
+    params = params ? { ...params, ...this.defaultParams } : this.defaultParams;
 
-    this.isTerminalLogger(logLevel, (color) => console.log(clc[color](this.formatString(props))));
-    this.isFileLogger(logLevel, () => this.pinoInstance?.info(props));
+    this.isTerminalLogger(logLevel, (color) => console.log(clc[color](this.formatString({ message, params, timestamp }))));
+    this.isFileLogger(logLevel, () => this.pinoInstance?.info({ message, params, timestamp }));
   }
 
-  public debug(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void {
+  public debug(message: string, params?: object, timestamp?: number): void {
     const logLevel: TLogLevel = 'debug';
 
     if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
 
-    props.params = props.params ? props.params : this.defaultParams;
+    params = params ? { ...params, ...this.defaultParams } : this.defaultParams;
 
-    this.isTerminalLogger(logLevel, (color) => console.debug(clc[color](this.formatString(props))));
-    this.isFileLogger(logLevel, () => this.pinoInstance?.debug(props));
+    this.isTerminalLogger(logLevel, (color) => console.debug(clc[color](this.formatString({ message, params, timestamp }))));
+    this.isFileLogger(logLevel, () => this.pinoInstance?.debug({ message, params, timestamp }));
   }
 
-  public warning(props: ILoggerProps): void {
+  public warning(message: string, params?: object, timestamp?: number): void {
     const logLevel: TLogLevel = 'warning';
 
     if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
 
-    props.params = props.params ? props.params : this.defaultParams;
+    params = params ? { ...params, ...this.defaultParams } : this.defaultParams;
 
-    this.isTerminalLogger(logLevel, (color) => console.warn(clc[color](this.formatString({ ...props }))));
-    this.isFileLogger(logLevel, () => this.pinoInstance?.warn({ ...props, params: this.defaultParams }));
+    this.isTerminalLogger(logLevel, (color) => console.warn(clc[color](this.formatString({ message, params, timestamp }))));
+    this.isFileLogger(logLevel, () => this.pinoInstance?.warn({ message, params, timestamp }));
   }
 
-  public error(props: ILoggerProps): void {
+  public error(message: string, error: any, params?: object, timestamp?: number): void {
     const logLevel: TLogLevel = 'error';
 
     if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
 
-    props.params = props.params ? props.params : this.defaultParams;
+    params = params ? { ...params, ...this.defaultParams } : this.defaultParams;
 
-    this.isTerminalLogger(logLevel, (color) => console.error(clc[color](this.formatString({ ...props }))));
-    this.isFileLogger(logLevel, () => this.pinoInstance?.error({ ...props, params: this.defaultParams }));
+    this.isTerminalLogger(logLevel, (color) => console.error(clc[color](this.formatString({ message, error: JSON.stringify(error), params, timestamp }))));
+    this.isFileLogger(logLevel, () => this.pinoInstance?.error({ message, error: JSON.stringify(error), params, timestamp }));
   }
 
-  public critical(props: ILoggerProps): void {
+  public critical(message: string, error: any, params?: object, timestamp?: number): void {
     const logLevel: TLogLevel = 'critical';
 
     if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
 
-    this.isTerminalLogger(logLevel, (color) => console.error(clc[color](this.formatString({ ...props }))));
-    this.isFileLogger(logLevel, () => this.pinoInstance?.fatal({ ...props, params: this.defaultParams }));
+    params = params ? { ...params, ...this.defaultParams } : this.defaultParams;
+
+    this.isTerminalLogger(logLevel, (color) => console.error(clc[color](this.formatString({ message, error: JSON.stringify(error), params, timestamp }))));
+    this.isFileLogger(logLevel, () => this.pinoInstance?.fatal({ message, error: JSON.stringify(error), params, timestamp }));
   }
 }

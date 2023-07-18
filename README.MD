@@ -135,20 +135,20 @@ const logger = new ErisLogger({ file: fileConfig });
 
 ```ts
 // Info log
-logger.info({ title: 'INFO', message: 'info string', params: { foo: 'bar' } });
+logger.info('info message', { data: [] });
 
 // Alert log
-logger.alert({ title: 'ALERT', message: 'alert string', params: { foo: 'bar' } });
+logger.alert('alert message', { data: [] });
 
 // Debug log
-logger.debug({ title: 'DEBUG', message: 'debug string', params: { foo: 'bar' } });
+logger.debug('debug message', { data: [] });
 
 // Warning log
-logger.warning({ title: 'WARNING', message: 'warning string', error: new Error('Some warning') });
+logger.warning('warning message', { data: [] });
 
 // Error log
-logger.error({ title: 'ERROR', message: 'error string', error: new Error('Some error') });
+logger.error('error message', new Error('error'), { data: [] });
 
 // Critical log
-logger.critical({ title: 'CRITICAl', message: 'critical error string', error: new Error('Some critical error') });
+logger.critical('critical message', new Error('error'), { data: [] });
 ```

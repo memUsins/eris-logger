@@ -20,11 +20,11 @@ export class FileLogger {
   private colorize = true;
 
   constructor(config: FileLoggerConfig) {
-    this.use = config.use;
+    this.use = config?.use;
 
-    if (config.options.dir) this.dir = config.options.dir;
-    if (config.options.levels) this.levels = config.options.levels;
-    if (config.options.colorize) this.colorize = config.options.colorize;
+    if (config?.options?.dir) this.dir = config?.options?.dir;
+    if (config?.options?.levels) this.levels = config?.options?.levels;
+    if (config?.options?.colorize) this.colorize = config?.options?.colorize;
 
     const pinoConfig = {
       transport: {

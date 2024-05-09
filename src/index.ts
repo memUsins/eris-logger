@@ -28,9 +28,9 @@ export class ErisLogger {
   constructor(config: LoggerConfig, defaultParams?: object) {
     this.defaultParams = defaultParams || {};
 
-    if (config.options?.dateformat) this.dateformat = config.options.dateformat;
-    if (config.terminal?.use) this.terminal = new TerminalLogger({ ...config.terminal, dateFormat: this.dateformat });
-    if (config.file?.use) this.file = new FileLogger(config.file);
+    if (config.options?.dateformat) this.dateformat = config?.options?.dateformat;
+    if (config.terminal?.use) this.terminal = new TerminalLogger({ ...config?.terminal, dateFormat: this.dateformat });
+    if (config.file?.use) this.file = new FileLogger(config?.file);
 
     if (config.options?.levels) this.levels = config.options.levels;
   }

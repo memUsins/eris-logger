@@ -54,11 +54,11 @@ export class TerminalLogger {
   private levels: LogLevel[] = ['info', 'alert', 'debug', 'warning', 'error', 'fatal'];
 
   constructor(config: TerminalLoggerConfig) {
-    this.use = config.use;
+    this.use = config?.use;
 
-    if (config.options.colors) this.colors = config.options.colors;
-    if (config.options.levels) this.levels = config.options.levels;
-    if (config.dateFormat) this.dateformat = config.dateFormat;
+    if (config?.options?.colors) this.colors = config?.options?.colors;
+    if (config?.options?.levels) this.levels = config?.options?.levels;
+    if (config?.dateFormat) this.dateformat = config?.dateFormat;
   }
 
   private formatDate(timestamp?: number): string {

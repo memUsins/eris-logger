@@ -1,186 +1,95 @@
-import pino, { Logger } from 'pino';
-import * as clc from 'chalk';
+import { GlobalLoggerConfig, LoggerProps, LogLevel } from './types';
 
-import { TLogLevel, TColor, ILoggerProps, ILoggerConfig, TDefaultObject } from './types';
+import { TerminalLogger, TerminalLoggerConfig } from './terminalLogger';
+import { FileLogger, FileLoggerConfig } from './fileLogger';
+
+export interface LoggerConfig {
+  file?: FileLoggerConfig;
+  terminal?: TerminalLoggerConfig;
+  options?: GlobalLoggerConfig;
+}
 
 export class ErisLogger {
-  public config: ILoggerConfig = {
-    terminal: {
-      use: true,
-      colors: {
-        info: 'greenBright',
-        alert: 'blueBright',
-        debug: 'blackBright',
-        warning: 'yellow',
-        error: 'redBright',
-        critical: 'bgRed',
-      },
-      levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
-    },
-    file: {
-      use: true,
-      dir: '/logs/log.log',
-      colorize: true,
-      levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
-    },
-    options: {
-      dateformat: {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-      },
-      levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
-    },
+  public defaultParams: object;
+
+  private levels = ['info', 'alert', 'debug', 'warning', 'error', 'fatal'];
+  private dateformat: false | Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
   };
 
-  public pinoInstance: Logger | undefined;
-  public defaultParams: TDefaultObject;
+  private terminal: TerminalLogger | undefined;
+  private file: FileLogger | undefined;
 
-  constructor(config: ILoggerConfig, defaultParams?: TDefaultObject) {
+  constructor(config: LoggerConfig, defaultParams?: object) {
     this.defaultParams = defaultParams || {};
 
-    if (config.options) {
-      config.options.dateformat && this.config.options ? (this.config.options = { dateformat: config.options.dateformat }) : false;
-      config.options.levels && this.config.options ? (this.config.options = { levels: config.options.levels }) : false;
-    }
+    if (config.options?.dateformat) this.dateformat = config.options.dateformat;
+    if (config.terminal?.use) this.terminal = new TerminalLogger({ ...config.terminal, dateFormat: this.dateformat });
+    if (config.file?.use) this.file = new FileLogger(config.file);
 
-    if (config.terminal && config.terminal.use) {
-      config.terminal.colors && this.config.terminal
-        ? (this.config.terminal = {
-            ...this.config.terminal,
-            colors: config.terminal.colors,
-          })
-        : false;
-      config.terminal.levels && this.config.terminal
-        ? (this.config.terminal = {
-            ...this.config.terminal,
-            levels: config.terminal.levels,
-          })
-        : false;
-    }
-
-    if (config.file && config.file.use) {
-      const pinoConfig = {
-        transport: {
-          target: 'pino-pretty',
-          options: {
-            colorize: config.file.colorize === undefined ? this.config.file?.colorize : config.file.colorize,
-            destination: config.file.dir,
-            translateTime: true,
-            messageFormat: true,
-          },
-        },
-      };
-
-      this.config.file = config.file;
-      this.pinoInstance = pino(pinoConfig);
-    }
+    if (config.options?.levels) this.levels = config.options.levels;
   }
 
-  private formatDate(timestamp?: number): string {
-    const date = new Date(timestamp || new Date().getTime());
-
-    if (this.config.options && typeof this.config.options.dateformat !== 'boolean') {
-      return date.toLocaleDateString('ru-RU', this.config.options.dateformat);
-    } else return date.getTime().toString();
-  }
-
-  private formatString({ title, message, params, error, timestamp }: ILoggerProps): string {
-    const header = `[TIME]: ${this.formatDate(timestamp)}`;
-    const bodyTitle = `[TITLE]: ${title}`;
-    const bodyMessage = `[MESSAGE]: ${message}`;
-    const bodyParams = `[PARAMS]: ${JSON.stringify(params || null)}`;
-    const bodyError = `[ERROR]: ${JSON.stringify(error) || null}`;
-
-    return [' ', header, title ? bodyTitle : '', bodyMessage, bodyParams, bodyError].filter((item) => !!item).join('\n');
-  }
-
-  public setDefaultParams(params: TDefaultObject) {
+  public setDefaultParams(params: object) {
     return (this.defaultParams = Object.assign(this.defaultParams, params));
   }
 
-  private isTerminalLogger(logLevel: TLogLevel, callback: (color: TColor) => void) {
-    if (this.config.terminal && this.config.terminal.use && this.config.terminal?.levels?.indexOf(logLevel) !== -1) {
-      let color: TColor = 'white';
+  public info(props: Pick<LoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void {
+    const logLevel: LogLevel = 'info';
+    if (!this.levels.includes(logLevel)) return;
 
-      if (this.config.terminal.colors && this.config.terminal.colors[logLevel]) {
-        color = this.config.terminal.colors[logLevel] || 'white';
-      }
+    props.params = this.setDefaultParams(props.params);
 
-      callback(color);
-    }
+    this.terminal?.print(logLevel, props);
+    this.file?.print(logLevel, props);
   }
 
-  private isFileLogger(logLevel: TLogLevel, callback: () => void) {
-    if (this.config.file && this.config.file.use && this.pinoInstance && this.config.file?.levels?.indexOf(logLevel) !== -1) return callback();
+  public alert(props: Pick<LoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void {
+    const logLevel: LogLevel = 'alert';
+    if (!this.levels.includes(logLevel)) return;
+
+    props.params = this.setDefaultParams(props.params);
+
+    this.terminal?.print(logLevel, props);
+    this.file?.print(logLevel, props);
   }
 
-  public info(message: string, params?: object, timestamp?: number): void {
-    const logLevel: TLogLevel = 'info';
+  public debug(props: Pick<LoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void {
+    const logLevel: LogLevel = 'debug';
+    if (!this.levels.includes(logLevel)) return;
 
-    if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
+    props.params = this.setDefaultParams(props.params);
 
-    params = params ? { ...params, ...this.defaultParams } : this.defaultParams;
-
-    this.isTerminalLogger(logLevel, (color) => console.info(clc[color](this.formatString({ message, params, timestamp }))));
-    this.isFileLogger(logLevel, () => this.pinoInstance?.info({ message, params, timestamp }));
+    this.terminal?.print(logLevel, props);
+    this.file?.print(logLevel, props);
   }
 
-  public alert(message: string, params?: object, timestamp?: number): void {
-    const logLevel: TLogLevel = 'alert';
+  public warning(props: Pick<LoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void {
+    const logLevel: LogLevel = 'warning';
+    if (!this.levels.includes(logLevel)) return;
 
-    if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
-
-    params = params ? { ...params, ...this.defaultParams } : this.defaultParams;
-
-    this.isTerminalLogger(logLevel, (color) => console.log(clc[color](this.formatString({ message, params, timestamp }))));
-    this.isFileLogger(logLevel, () => this.pinoInstance?.info({ message, params, timestamp }));
+    this.terminal?.print(logLevel, props);
+    this.file?.print(logLevel, props);
   }
 
-  public debug(message: string, params?: object, timestamp?: number): void {
-    const logLevel: TLogLevel = 'debug';
+  public error(props: Pick<LoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void {
+    const logLevel: LogLevel = 'error';
+    if (!this.levels.includes(logLevel)) return;
 
-    if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
-
-    params = params ? { ...params, ...this.defaultParams } : this.defaultParams;
-
-    this.isTerminalLogger(logLevel, (color) => console.debug(clc[color](this.formatString({ message, params, timestamp }))));
-    this.isFileLogger(logLevel, () => this.pinoInstance?.debug({ message, params, timestamp }));
+    this.terminal?.print(logLevel, props);
+    this.file?.print(logLevel, props);
   }
 
-  public warning(message: string, params?: object, timestamp?: number): void {
-    const logLevel: TLogLevel = 'warning';
+  public fatal(props: Pick<LoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void {
+    const logLevel: LogLevel = 'fatal';
+    if (!this.levels.includes(logLevel)) return;
 
-    if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
-
-    params = params ? { ...params, ...this.defaultParams } : this.defaultParams;
-
-    this.isTerminalLogger(logLevel, (color) => console.warn(clc[color](this.formatString({ message, params, timestamp }))));
-    this.isFileLogger(logLevel, () => this.pinoInstance?.warn({ message, params, timestamp }));
-  }
-
-  public error(message: string, error: any, params?: object, timestamp?: number): void {
-    const logLevel: TLogLevel = 'error';
-
-    if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
-
-    params = params ? { ...params, ...this.defaultParams } : this.defaultParams;
-
-    this.isTerminalLogger(logLevel, (color) => console.error(clc[color](this.formatString({ message, error: JSON.stringify(error), params, timestamp }))));
-    this.isFileLogger(logLevel, () => this.pinoInstance?.error({ message, error: JSON.stringify(error), params, timestamp }));
-  }
-
-  public critical(message: string, error: any, params?: object, timestamp?: number): void {
-    const logLevel: TLogLevel = 'critical';
-
-    if (this.config.options?.levels?.indexOf(logLevel) === -1) return;
-
-    params = params ? { ...params, ...this.defaultParams } : this.defaultParams;
-
-    this.isTerminalLogger(logLevel, (color) => console.error(clc[color](this.formatString({ message, error: JSON.stringify(error), params, timestamp }))));
-    this.isFileLogger(logLevel, () => this.pinoInstance?.fatal({ message, error: JSON.stringify(error), params, timestamp }));
+    this.terminal?.print(logLevel, props);
+    this.file?.print(logLevel, props);
   }
 }

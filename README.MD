@@ -5,7 +5,7 @@
 * [Example](#example)
 * - [General concepts](#general-concepts)
 * - [Terminal](#terminal)
-* - [File](#file)
+* - [FileLogger](#file)
 * - [Methods](#methods)
 
 ## About package
@@ -28,7 +28,7 @@ The default settings create a logger that will write to the terminal and file.
 The logger also includes the following settings:
 
 - Terminal Settings
-- File settings
+- FileLogger settings
 - Date format
 - Logging level
 
@@ -50,12 +50,17 @@ How it looks like:
 const logger = new ErisLogger({
   terminal: {
     use: true,
-    levels: ['info', 'debug']
+    options: {
+      levels: ['info', 'debug']
+    }
   },
   file: {
     use: true,
-    levels: ['warning', 'error', 'critical']
+    options: {
+      levels: ['warning', 'error', 'critical']
+    } 
   },
+  options: {},
 });
 ```
 
@@ -75,7 +80,7 @@ To begin with, let's create an instance of the ErisLogger class,
 after which we indicate that we need to output logs in the terminal.
 
 ```js
-const logger = new ErisLogger({ terminal: { use: true } });
+const logger = new ErisLogger({ terminal: { use: true, options: {} }, options: {} });
 ```
 
 This is how the default settings look like:
@@ -83,38 +88,40 @@ This is how the default settings look like:
 ```js
 const terminalConfig = {
   use: true,
-  colors: {
-    info: 'greenBright',
-    alert: 'blueBright',
-    debug: 'blackBright',
-    warning: 'yellow',
-    error: 'redBright',
-    critical: 'bgRed',
+  options: {
+    colors: {
+      info: 'greenBright',
+      alert: 'blueBright',
+      debug: 'blackBright',
+      warning: 'yellow',
+      error: 'redBright',
+      critical: 'bgRed',
+    },
+    levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
   },
-  levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
 };
 
 
-const logger = new ErisLogger({ terminal: terminalConfig });
+const logger = new ErisLogger({ terminal: terminalConfig, options: {} });
 ```
 
 List of all available colors:
 
 ```ts
-export type TTerminalColors = 'black' | 'red' | 'green' | 'yellow' | 'blue' | 'magenta' | 'cyan' | 'white';
-export type TTerminalBgColors = 'bgBlack' | 'bgRed' | 'bgGreen' | 'bgYellow' | 'bgBlue' | 'bgMagenta' | 'bgCyan' | 'bgWhite';
+export type TerminalColors = 'black' | 'red' | 'green' | 'yellow' | 'blue' | 'magenta' | 'cyan' | 'white';
+export type TerminalBgColors = 'bgBlack' | 'bgRed' | 'bgGreen' | 'bgYellow' | 'bgBlue' | 'bgMagenta' | 'bgCyan' | 'bgWhite';
 
-export type TTerminalBrightColors =  | 'blackBright'  | 'redBright'  | 'greenBright'  | 'yellowBright'  | 'blueBright'  | 'magentaBright'  | 'cyanBright'  | 'whiteBright';
-export type TTerminalBgBrightColors =  | 'bgBlackBright'  | 'bgRedBright'  | 'bgGreenBright'  | 'bgYellowBright'  | 'bgBlueBright'  | 'bgMagentaBright'  | 'bgCyanBright'  | 'bgWhiteBright';
+export type TerminalBrightColors =  | 'blackBright'  | 'redBright'  | 'greenBright'  | 'yellowBright'  | 'blueBright'  | 'magentaBright'  | 'cyanBright'  | 'whiteBright';
+export type TerminalBgBrightColors =  | 'bgBlackBright'  | 'bgRedBright'  | 'bgGreenBright'  | 'bgYellowBright'  | 'bgBlueBright'  | 'bgMagentaBright'  | 'bgCyanBright'  | 'bgWhiteBright';
 ```
 
-### File
+### FileLogger
 
 To begin with, let's create an instance of the ErisLogger class,
 after which we indicate that we need to output logs in the file.
 
 ```js
-const logger = new ErisLogger({ file: { use: true } });
+const logger = new ErisLogger({ file: { use: true, options: {} }, options: {} });
 ```
 
 This is how the default settings look like:
@@ -122,33 +129,35 @@ This is how the default settings look like:
 ```js
 const fileConfig = {
   use: true,
-  dir: '/logs/log.log',
-  colorize: true,
-  levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
+  options: {
+    dir: '/logs.log',
+    colorize: true,
+    levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
+  },
 };
 
 
-const logger = new ErisLogger({ file: fileConfig });
+const logger = new ErisLogger({ file: fileConfig, options: {} });
 ```
 
 ### Methods
 
 ```ts
 // Info log
-logger.info('info message', { data: [] });
+logger.info({ title: 'INFO', message: 'info string', params: { foo: 'bar' } });
 
 // Alert log
-logger.alert('alert message', { data: [] });
+logger.alert({ title: 'ALERT', message: 'alert string', params: { foo: 'bar' } });
 
 // Debug log
-logger.debug('debug message', { data: [] });
+logger.debug({ title: 'DEBUG', message: 'debug string', params: { foo: 'bar' } });
 
 // Warning log
-logger.warning('warning message', { data: [] });
+logger.warning({ title: 'WARNING', message: 'warning string', error: new Error('Some warning') });
 
 // Error log
-logger.error('error message', new Error('error'), { data: [] });
+logger.error({ title: 'ERROR', message: 'error string', error: new Error('Some error') });
 
 // Critical log
-logger.critical('critical message', new Error('error'), { data: [] });
+logger.critical({ title: 'CRITICAl', message: 'critical error string', error: new Error('Some critical error') });
 ```

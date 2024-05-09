@@ -4,10 +4,10 @@ import { ILoggerProps, ILoggerConfig } from './types';
 export class ErisLogger {
   public config: ILoggerConfig;
   public pinoInstance: Logger | undefined;
-  public defaultParams: {};
-  constructor(config: ILoggerConfig, defaultParams?: {});
+  public defaultParams: object;
+  constructor(config: ILoggerConfig, defaultParams?: object);
   public getFileLoggerInstance(): Logger | undefined;
-  public setDefaultParams(params: {}): {};
+  public setDefaultParams(params: object): object;
   public info(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void;
   public alert(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void;
   public debug(props: Pick<ILoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void;

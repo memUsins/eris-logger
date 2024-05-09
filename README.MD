@@ -5,7 +5,7 @@
 * [Example](#example)
 * - [General concepts](#general-concepts)
 * - [Terminal](#terminal)
-* - [File](#file)
+* - [FileLogger](#file)
 * - [Methods](#methods)
 
 ## About package
@@ -28,7 +28,7 @@ The default settings create a logger that will write to the terminal and file.
 The logger also includes the following settings:
 
 - Terminal Settings
-- File settings
+- FileLogger settings
 - Date format
 - Logging level
 
@@ -108,14 +108,14 @@ const logger = new ErisLogger({ terminal: terminalConfig, options: {} });
 List of all available colors:
 
 ```ts
-export type TTerminalColors = 'black' | 'red' | 'green' | 'yellow' | 'blue' | 'magenta' | 'cyan' | 'white';
-export type TTerminalBgColors = 'bgBlack' | 'bgRed' | 'bgGreen' | 'bgYellow' | 'bgBlue' | 'bgMagenta' | 'bgCyan' | 'bgWhite';
+export type TerminalColors = 'black' | 'red' | 'green' | 'yellow' | 'blue' | 'magenta' | 'cyan' | 'white';
+export type TerminalBgColors = 'bgBlack' | 'bgRed' | 'bgGreen' | 'bgYellow' | 'bgBlue' | 'bgMagenta' | 'bgCyan' | 'bgWhite';
 
-export type TTerminalBrightColors =  | 'blackBright'  | 'redBright'  | 'greenBright'  | 'yellowBright'  | 'blueBright'  | 'magentaBright'  | 'cyanBright'  | 'whiteBright';
-export type TTerminalBgBrightColors =  | 'bgBlackBright'  | 'bgRedBright'  | 'bgGreenBright'  | 'bgYellowBright'  | 'bgBlueBright'  | 'bgMagentaBright'  | 'bgCyanBright'  | 'bgWhiteBright';
+export type TerminalBrightColors =  | 'blackBright'  | 'redBright'  | 'greenBright'  | 'yellowBright'  | 'blueBright'  | 'magentaBright'  | 'cyanBright'  | 'whiteBright';
+export type TerminalBgBrightColors =  | 'bgBlackBright'  | 'bgRedBright'  | 'bgGreenBright'  | 'bgYellowBright'  | 'bgBlueBright'  | 'bgMagentaBright'  | 'bgCyanBright'  | 'bgWhiteBright';
 ```
 
-### File
+### FileLogger
 
 To begin with, let's create an instance of the ErisLogger class,
 after which we indicate that we need to output logs in the file.
@@ -130,7 +130,7 @@ This is how the default settings look like:
 const fileConfig = {
   use: true,
   options: {
-    dir: '/logs/log.log',
+    dir: '/logs.log',
     colorize: true,
     levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
   },

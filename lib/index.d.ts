@@ -1,9 +1,11 @@
 import { GlobalLoggerConfig, LoggerProps } from './types';
 import { TerminalLoggerConfig } from './terminalLogger';
 import { FileLoggerConfig } from './fileLogger';
+import { WSLoggerConfig } from './wsLogger';
 export interface LoggerConfig {
     file?: FileLoggerConfig;
     terminal?: TerminalLoggerConfig;
+    ws?: WSLoggerConfig;
     options?: GlobalLoggerConfig;
 }
 export declare class ErisLogger {
@@ -12,6 +14,7 @@ export declare class ErisLogger {
     private dateformat;
     private terminal;
     private file;
+    private ws;
     constructor(config: LoggerConfig, defaultParams?: object);
     setDefaultParams(params: object): object;
     info(props: Pick<LoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void;

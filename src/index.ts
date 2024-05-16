@@ -2,10 +2,12 @@ import { GlobalLoggerConfig, LoggerProps, LogLevel } from './types';
 
 import { TerminalLogger, TerminalLoggerConfig } from './terminalLogger';
 import { FileLogger, FileLoggerConfig } from './fileLogger';
+import { WSLogger, WSLoggerConfig } from './wsLogger';
 
 export interface LoggerConfig {
   file?: FileLoggerConfig;
   terminal?: TerminalLoggerConfig;
+  ws?: WSLoggerConfig;
   options?: GlobalLoggerConfig;
 }
 
@@ -24,6 +26,7 @@ export class ErisLogger {
 
   private terminal: TerminalLogger | undefined;
   private file: FileLogger | undefined;
+  private ws: WSLogger | undefined;
 
   constructor(config: LoggerConfig, defaultParams?: object) {
     this.defaultParams = defaultParams || {};
@@ -31,6 +34,7 @@ export class ErisLogger {
     if (config.options?.dateformat) this.dateformat = config?.options?.dateformat;
     if (config.terminal?.use) this.terminal = new TerminalLogger({ ...config?.terminal, dateFormat: this.dateformat });
     if (config.file?.use) this.file = new FileLogger(config?.file);
+    if (config.ws?.use) this.ws = new WSLogger(config?.ws);
 
     if (config.options?.levels) this.levels = config.options.levels;
   }
@@ -47,6 +51,7 @@ export class ErisLogger {
 
     this.terminal?.print(logLevel, props);
     this.file?.print(logLevel, props);
+    this.ws?.print(logLevel, props);
   }
 
   public alert(props: Pick<LoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void {
@@ -57,6 +62,7 @@ export class ErisLogger {
 
     this.terminal?.print(logLevel, props);
     this.file?.print(logLevel, props);
+    this.ws?.print(logLevel, props);
   }
 
   public debug(props: Pick<LoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void {
@@ -67,6 +73,7 @@ export class ErisLogger {
 
     this.terminal?.print(logLevel, props);
     this.file?.print(logLevel, props);
+    this.ws?.print(logLevel, props);
   }
 
   public warning(props: Pick<LoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void {
@@ -75,6 +82,7 @@ export class ErisLogger {
 
     this.terminal?.print(logLevel, props);
     this.file?.print(logLevel, props);
+    this.ws?.print(logLevel, props);
   }
 
   public error(props: Pick<LoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void {
@@ -83,6 +91,7 @@ export class ErisLogger {
 
     this.terminal?.print(logLevel, props);
     this.file?.print(logLevel, props);
+    this.ws?.print(logLevel, props);
   }
 
   public fatal(props: Pick<LoggerProps, 'title' | 'message' | 'error' | 'timestamp'>): void {
@@ -91,5 +100,6 @@ export class ErisLogger {
 
     this.terminal?.print(logLevel, props);
     this.file?.print(logLevel, props);
+    this.ws?.print(logLevel, props);
   }
 }

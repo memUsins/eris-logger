@@ -5,7 +5,8 @@
 * [Example](#example)
 * - [General concepts](#general-concepts)
 * - [Terminal](#terminal)
-* - [FileLogger](#file)
+* - [FileLogger](#FileLogger)
+* - [WSLogger (ErisLoggerCenter)](#ws)
 * - [Methods](#methods)
 
 ## About package
@@ -60,7 +61,6 @@ const logger = new ErisLogger({
       levels: ['warning', 'error', 'critical']
     } 
   },
-  options: {},
 });
 ```
 
@@ -80,7 +80,7 @@ To begin with, let's create an instance of the ErisLogger class,
 after which we indicate that we need to output logs in the terminal.
 
 ```js
-const logger = new ErisLogger({ terminal: { use: true, options: {} }, options: {} });
+const logger = new ErisLogger({ terminal: { use: true, options: {} } });
 ```
 
 This is how the default settings look like:
@@ -102,7 +102,7 @@ const terminalConfig = {
 };
 
 
-const logger = new ErisLogger({ terminal: terminalConfig, options: {} });
+const logger = new ErisLogger({ terminal: terminalConfig });
 ```
 
 List of all available colors:
@@ -121,7 +121,7 @@ To begin with, let's create an instance of the ErisLogger class,
 after which we indicate that we need to output logs in the file.
 
 ```js
-const logger = new ErisLogger({ file: { use: true, options: {} }, options: {} });
+const logger = new ErisLogger({ file: { use: true, options: {} } });
 ```
 
 This is how the default settings look like:
@@ -137,7 +137,38 @@ const fileConfig = {
 };
 
 
-const logger = new ErisLogger({ file: fileConfig, options: {} });
+const logger = new ErisLogger({ file: fileConfig });
+```
+
+### WSLogger (ErisLoggerCenter)
+
+First, you need to deploy a [logger center instance](https://github.com/eris-apple/logger_center).
+
+Now let's create an instance of the ErisLogger class,
+and then specify that we need to output logs to the logger center.
+
+```js
+const logger = new ErisLogger({ ws: { use: true, options: {} } });
+```
+
+This is how the default settings look like:
+
+```js
+const wsConfig = {
+  use: true,
+  options: {
+    hostname: 'localhost',
+    port: 5000,
+    auth: {
+      projectId: 'your project id...',
+      secret: 'your secret...',
+    },
+    levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
+  },
+};
+
+
+const logger = new ErisLogger({ ws: wsConfig });
 ```
 
 ### Methods

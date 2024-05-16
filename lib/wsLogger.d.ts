@@ -28,5 +28,5 @@ export declare class WSLogger {
     private connect;
     private send;
     private newSendObject;
-    print(logLevel: LogLevel, props: Pick<LoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): false | undefined;
+    print(logLevel: LogLevel, props: LoggerProps): false | undefined;
 }

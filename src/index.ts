@@ -98,6 +98,8 @@ export class ErisLogger {
     const logLevel: LogLevel = 'fatal';
     if (!this.levels.includes(logLevel)) return;
 
+    console.log(props);
+
     this.terminal?.print(logLevel, props);
     this.file?.print(logLevel, props);
     this.ws?.print(logLevel, props);

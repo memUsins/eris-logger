@@ -20,7 +20,10 @@ export interface WSLoggerConfig {
 interface Log {
   chain_id?: string;
   level: LogLevel;
-  content: string;
+  title?: string;
+  content?: string;
+  error?: string;
+  params?: string;
   timestamp?: number;
 }
 
@@ -120,6 +123,8 @@ export class WSLogger {
       }
     }
 
+    console.log(message);
+
     const messageObject = JSON.stringify({
       type: 'log_create',
       data: message,
@@ -132,15 +137,23 @@ export class WSLogger {
     return true;
   }
 
-  private newSendObject(logLevel: LogLevel, props: Pick<LoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): Log {
+  private newSendObject(logLevel: LogLevel, props: LoggerProps): Log {
     return {
       level: logLevel,
-      content: `${props.title}: ${props.message}`,
+      title: props.title,
+      content: props.message,
+      params: JSON.stringify(props.params),
+      error:
+        props.error instanceof Error
+          ? JSON.stringify(props.error, Object.getOwnPropertyNames(props.error))
+          : typeof props.error === 'object'
+          ? JSON.stringify(props.error)
+          : props.error,
       timestamp: props.timestamp,
     };
   }
 
-  print(logLevel: LogLevel, props: Pick<LoggerProps, 'title' | 'message' | 'params' | 'timestamp'>) {
+  print(logLevel: LogLevel, props: LoggerProps) {
     if (!logLevel) return;
     if (!this.use) return;
     if (!this.wsOpen || !this.ws) {

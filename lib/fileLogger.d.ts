@@ -14,5 +14,5 @@ export declare class FileLogger {
     private levels;
     private colorize;
     constructor(config: FileLoggerConfig);
-    print(logLevel: LogLevel, props: Pick<LoggerProps, 'title' | 'message' | 'params' | 'timestamp'>): void;
+    print(logLevel: LogLevel, props: LoggerProps): void;
 }

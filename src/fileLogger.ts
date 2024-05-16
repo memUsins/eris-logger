@@ -41,7 +41,7 @@ export class FileLogger {
     this.pinoInstance = pino(pinoConfig);
   }
 
-  print(logLevel: LogLevel, props: Pick<LoggerProps, 'title' | 'message' | 'params' | 'timestamp'>) {
+  print(logLevel: LogLevel, props: LoggerProps) {
     if (!logLevel) return;
     if (!this.use) return;
     if (!this.pinoInstance) return;

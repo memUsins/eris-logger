@@ -79,7 +79,7 @@ export class TerminalLogger {
     return ['', header, bodyTitle, bodyMessage, bodyParams, bodyError].join('\n');
   }
 
-  print(logLevel: LogLevel, props: Pick<LoggerProps, 'title' | 'message' | 'params' | 'timestamp'>) {
+  print(logLevel: LogLevel, props: LoggerProps) {
     if (!logLevel) return;
     if (!this.use) return;
     if (!this.levels.includes(logLevel)) return;

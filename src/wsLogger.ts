@@ -123,8 +123,6 @@ export class WSLogger {
       }
     }
 
-    console.log(message);
-
     const messageObject = JSON.stringify({
       type: 'log_create',
       data: message,

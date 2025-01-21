@@ -1,194 +1,83 @@
 # ErisLogger 
 
-* [About](#about-package)
-* [Installation](#installation)
-* [Example](#example)
-* - [General concepts](#general-concepts)
-* - [Terminal](#terminal)
-* - [FileLogger](#FileLogger)
-* - [WSLogger (ErisLoggerCenter)](#ws)
-* - [Methods](#methods)
+**eris-logger** is a powerful and flexible logging library for NodeJS that allows you to customize the logging process to suit your needs.
+It supports logging to files, the console, and provides convenient customization tools.
 
-## About package
+## Key Features
 
-ErisLogger is a logging tool that makes life easier. 
-It has under the hood a [pino](https://www.npmjs.com/package/pino) package for writing logs to a file 
-as well as tools for console logging.
+### Flexible Logging Configuration
+- **Supports logging to:**
+  - File
+  - Console
+  - Easy integration of custom adapters for log collection and processing.
+
+### Console Log Color Customization
+- Ability to set custom colors for each log level.
+- Ability to set custom colors for message text and timestamps.
+
+### Multiple Log Levels Supported
+- Debug
+- Info
+- Alert
+- Warn
+- Error
+- Fatal
+
+### Additional Methods for Logging
+- **WithFields**, **WithError**, **WithName** for detailed context:
+  ```js
+  logger.WithFields({foo: "bar"}).Info("with fields") // output: 2024-12-13T17:21:57.176Z INFO with fields foo=bar
+  logger.WithError(new Error("my error")).Info("with error")  // output: 2024-12-13T17:21:57.176Z INFO with error err=my error
+  logger.WithName("TestLogger").Info("with name") // output: 2024-12-13T17:21:57.176Z INFO [TestLogger]: with name
+  ```
 
 ##  Installation
 
+Install the library using the following command:
 ```shell
 npm i eris-logger
 ```
 
-## Example
+## Initialization
 
-### General concepts
+To get started, create a new logger and configure its adapters:
+```js
+const logger = new ErisLogger([new ConsoleAdapter(), new FileAdapter()])
+```
 
-The default settings create a logger that will write to the terminal and file.
-The logger also includes the following settings:
-
-- Terminal Settings
-- FileLogger settings
-- Date format
-- Logging level
+### Usage Example
 
 ```js
-const logger = new ErisLogger({
-  terminal: { ... },
-  file: { ... },
-  options: {},
-});
+logger.Info("Starting application")
+logger.WithName("DATABASE").Info("Initialization complete")
+logger.WithError(new Error("connection lost")).Error("Failed to connect to database")
 ```
 
-Logging levels can be different: for example,
-one configuration can be configured for a terminal,
-another for a file, or you can set a global one for all.
+## Creating a Custom Adapter
 
-How it looks like:
+**eris-logger** provides an interface for creating custom adapters to handle logs in a specific way:
+```typescript
+export interface BaseAdapter {
+  Log(log: Log): void;
 
-```js
-const logger = new ErisLogger({
-  terminal: {
-    use: true,
-    options: {
-      levels: ['info', 'debug']
-    }
-  },
-  file: {
-    use: true,
-    options: {
-      levels: ['warning', 'error', 'critical']
-    } 
-  },
-});
+  Format(log: Log): any;
+}
 ```
 
-Or global: 
+To create a custom adapter, implement this interface. For example:
+```typescript
+class MyAdapter {
+  Log(log: Log) {
+    console.log(this.Format(log));
+  }
 
-```js
-const logger = new ErisLogger({
-  options: {
-    levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical']
-  },
-});
+  Format(log: Log): string {
+    return [log.level, log.message].join(' ');
+  }
+}
 ```
 
-### Terminal
-
-To begin with, let's create an instance of the ErisLogger class,
-after which we indicate that we need to output logs in the terminal.
-
-```js
-const logger = new ErisLogger({ terminal: { use: true, options: {} } });
-```
-
-This is how the default settings look like:
-
-```js
-const terminalConfig = {
-  use: true,
-  options: {
-    colors: {
-      info: 'greenBright',
-      alert: 'blueBright',
-      debug: 'blackBright',
-      warning: 'yellow',
-      error: 'redBright',
-      critical: 'bgRed',
-    },
-    levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
-  },
-};
-
-
-const logger = new ErisLogger({ terminal: terminalConfig });
-```
-
-List of all available colors:
-
-```ts
-export type TerminalColors = 'black' | 'red' | 'green' | 'yellow' | 'blue' | 'magenta' | 'cyan' | 'white';
-export type TerminalBgColors = 'bgBlack' | 'bgRed' | 'bgGreen' | 'bgYellow' | 'bgBlue' | 'bgMagenta' | 'bgCyan' | 'bgWhite';
-
-export type TerminalBrightColors =  | 'blackBright'  | 'redBright'  | 'greenBright'  | 'yellowBright'  | 'blueBright'  | 'magentaBright'  | 'cyanBright'  | 'whiteBright';
-export type TerminalBgBrightColors =  | 'bgBlackBright'  | 'bgRedBright'  | 'bgGreenBright'  | 'bgYellowBright'  | 'bgBlueBright'  | 'bgMagentaBright'  | 'bgCyanBright'  | 'bgWhiteBright';
-```
-
-### FileLogger
-
-To begin with, let's create an instance of the ErisLogger class,
-after which we indicate that we need to output logs in the file.
-
-```js
-const logger = new ErisLogger({ file: { use: true, options: {} } });
-```
-
-This is how the default settings look like:
-
-```js
-const fileConfig = {
-  use: true,
-  options: {
-    dir: '/logs.log',
-    colorize: true,
-    levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
-  },
-};
-
-
-const logger = new ErisLogger({ file: fileConfig });
-```
-
-### WSLogger (ErisLoggerCenter)
-
-First, you need to deploy a [logger center instance](https://github.com/eris-apple/logger_center).
-
-Now let's create an instance of the ErisLogger class,
-and then specify that we need to output logs to the logger center.
-
-```js
-const logger = new ErisLogger({ ws: { use: true, options: {} } });
-```
-
-This is how the default settings look like:
-
-```js
-const wsConfig = {
-  use: true,
-  options: {
-    hostname: 'localhost',
-    port: 5000,
-    auth: {
-      projectId: 'your project id...',
-      secret: 'your secret...',
-    },
-    levels: ['info', 'alert', 'debug', 'warning', 'error', 'critical'],
-  },
-};
-
-
-const logger = new ErisLogger({ ws: wsConfig });
-```
-
-### Methods
-
-```ts
-// Info log
-logger.info({ title: 'INFO', message: 'info string', params: { foo: 'bar' } });
-
-// Alert log
-logger.alert({ title: 'ALERT', message: 'alert string', params: { foo: 'bar' } });
-
-// Debug log
-logger.debug({ title: 'DEBUG', message: 'debug string', params: { foo: 'bar' } });
-
-// Warning log
-logger.warning({ title: 'WARNING', message: 'warning string', error: new Error('Some warning') });
-
-// Error log
-logger.error({ title: 'ERROR', message: 'error string', error: new Error('Some error') });
-
-// Critical log
-logger.critical({ title: 'CRITICAl', message: 'critical error string', error: new Error('Some critical error') });
+Then, add the adapter to the logger:
+```typescript
+const logger = new ErisLogger([new MyAdapter()]);
 ```

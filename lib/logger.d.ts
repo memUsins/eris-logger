@@ -1,5 +1,5 @@
-import { Log, LogField } from './interfaces/log.interface';
-import { BaseAdapter } from './adapters/base.adapter';
+import { Log, LogField } from './interfaces';
+import { BaseAdapter } from './adapters';
 import { Entry } from './entry';
 export declare class ErisLogger {
     private adapters;

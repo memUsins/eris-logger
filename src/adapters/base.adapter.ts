@@ -1,4 +1,4 @@
-import { Log } from '../interfaces/log.interface';
+import { Log } from '../interfaces';
 
 export interface BaseAdapter {
   Log(log: Log): void;

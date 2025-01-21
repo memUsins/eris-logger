@@ -1,8 +1,5 @@
-import { Log, LogField, LogLevel, newDefaultLog } from './interfaces/log.interface';
-
-import { ConsoleAdapter } from './adapters/console.adapter';
-import { BaseAdapter } from './adapters/base.adapter';
-
+import { Log, LogField, LogLevel, newDefaultLog } from './interfaces';
+import { BaseAdapter, ConsoleAdapter } from './adapters';
 import { Entry } from './entry';
 
 export class ErisLogger {

@@ -1,4 +1,4 @@
-import { Log, LogData, LogField } from './interfaces/log.interface';
+import { Log, LogData, LogField } from './interfaces';
 import { ErisLogger } from './logger';
 export declare class Entry {
     private readonly logger;

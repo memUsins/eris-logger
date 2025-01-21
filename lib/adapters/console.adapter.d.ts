@@ -1,5 +1,4 @@
-import { LogLevel } from '../interfaces/log.interface';
-import { Log } from '../interfaces/log.interface';
+import { Log, LogLevel } from '../interfaces';
 import { BaseAdapter } from './base.adapter';
 export type Color = 'black' | 'red' | 'green' | 'yellow' | 'blue' | 'magenta' | 'cyan' | 'white' | 'gray' | 'grey' | 'blackBright' | 'redBright' | 'greenBright' | 'yellowBright' | 'blueBright' | 'magentaBright' | 'cyanBright' | 'whiteBright';
 export type ConsoleAdapterLevelColorConfig = {

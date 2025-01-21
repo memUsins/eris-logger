@@ -1,8 +1,6 @@
 import * as clc from 'chalk';
 
-import { LogLevel } from '../interfaces/log.interface';
-import { Log } from '../interfaces/log.interface';
-
+import { Log, LogLevel } from '../interfaces';
 import { BaseAdapter } from './base.adapter';
 
 export type Color =

@@ -2,10 +2,8 @@ import { WriteStream } from 'node:fs';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 
+import { Log, LogLevel } from '../interfaces';
 import { BaseAdapter } from './base.adapter';
-
-import { LogLevel } from '../interfaces/log.interface';
-import { Log } from '../interfaces/log.interface';
 
 export interface FileAdapterConfig {
   enable?: boolean;

@@ -1,8 +1,7 @@
 /// <reference types="node" />
 import { WriteStream } from 'node:fs';
+import { Log, LogLevel } from '../interfaces';
 import { BaseAdapter } from './base.adapter';
-import { LogLevel } from '../interfaces/log.interface';
-import { Log } from '../interfaces/log.interface';
 export interface FileAdapterConfig {
     enable?: boolean;
     level: LogLevel;

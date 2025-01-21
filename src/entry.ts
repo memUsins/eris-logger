@@ -1,5 +1,4 @@
-import { Log, LogData, LogField, LogLevel, newDefaultLog } from './interfaces/log.interface';
-
+import { Log, LogData, LogField, LogLevel, newDefaultLog } from './interfaces';
 import { ErisLogger } from './logger';
 
 export class Entry {

@@ -76,7 +76,7 @@ export class ConsoleAdapter implements BaseAdapter {
     let fields = '';
     if (log.data?.fields) {
       for (const key of Object.keys(log.data?.fields)) {
-        fieldsArray.push(`${key}=${log.data?.fields?.[key]}`);
+        fieldsArray.push(`${key}=${JSON.stringify(log.data?.fields?.[key])}`);
       }
 
       fields = clc[levelColor](fieldsArray.join(' '));
